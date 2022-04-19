@@ -1,0 +1,307 @@
+# Springboot_database_operations
+Springboot basic Database operations (CRUD)
+
+
+
+Ways to Create SpringBoot Application 1)Spring initializr 2) Spring Boot CLI 3) STS IDE
+To make changes to Spring Boot Application Default Properties we Configure it by application.properties under src/main/resources
+lets Start
+Lets add a controller
+a java class
+with Marked with annotations
+Has info About ------------- what URL access trigrers it?
+                             What method to run when accessed?
+                             
+     
+     //How to Tell Spring that this is the Spring Application?
+       @SpringBootApplication  //it is used to tell spring that this is the spring application and start from here
+          
+                             
+                             
+ @RestController
+ //@RestController Annotation is put to any class to tell spring that this class act as a Rest Controller
+ inside it 
+ To control the URL patterns
+ it consist of multiple method to control the URL actions and Request
+ 
+ 
+ ____________________________________________Use a class As Service/Component_________________________________________________
+ # it is used to declare the class or use a class as service/ or we can say a seprate Data Hold container So further Changes can be made without disturbing the other component
+ to Declare a Service We can use Either @Service or @Component both can be used
+ We Just have to Wite this annotation above the Service class to tell spring that this class act as Service
+ Example
+ We Used BusinessService class as a Service in this proj
+ Syntax    
+ 			@Service    // Alternate We Can Use @Component
+				public class BusinessService {
+			
+				}
+ 
+  ______________________________________________________GET request_____________________________________________________
+  #By default mode
+ 
+ @RequestMapping("/URLNAME")
+ // it tells the spring to execute this block of code when user user request /hello ,  
+ // By default RequestMapping("/URL NAME") maps only to the Get Method by default 
+  // For  other http request specify it in the annotation
+ 
+ 
+ 
+ IMPORTANT POINTS
+ Embedded Tomcat Server
+ 
+ * Convenience
+ * Servlet Container config is now application config
+ * We don't need to interact with Servlet and load the things Spring take care of these things
+ * Standalone Application  because of Embedded Tomcat short less code controllers 
+ * it runs like a simple Java Appllication with all important logic and with database
+ * Easy to Deploy
+ * Useful for Microservices architecture
+ 
+ 
+ 
+ 
+ 
+ 
+ @RequestMapping("/topics/{variableName}")
+ this is to tell spring that the {} part is an variable in URL and its value can varry according to input
+ 
+ but here the important part is how we can tell spring that to pass that Variable part to the mapped method so we do this using another annotation 
+  eg
+  	public Subjects getSingleSubject( @PathVariable String id) {    // this is to tell spring that pass that above variable part to this method
+		 return businesstry.getSingleSubject(id);
+	}
+  
+  NOTE HERE @PathVariable annotation is used to PASS THAT URL VARIABLE TO THE MAPPED METHOD 
+  just write @PathVariable in front of variable passed then it will tell spring to pass that path variable to mapped method
+  
+  
+  //if the variable name is different in @RequestMapping("/topics/{foo}") then we need to( @PathVariable("foo") String id) in request mapping method
+  
+  
+  PostMan eg 
+  URL: http://localhost:8080/topics     // for all existing entry
+  
+  URL: http://localhost:8080/topics/3      // for specific entry after / that is the id number of that entry that you want to see
+  ______________________________________________upto here is the GET request__________________________________________
+  
+  
+  CHILL BROOOOOOO!!!!!!!
+  EVERYTHING WILL BE ALRIGHT  KT
+  IMP IN PostMan in body Section Raw we have to write the json object/ valve
+  and in Header Section We have to select key as Content-Type   and value as  application/json
+  it will tell that this is the json object 
+  we use this in POST, PUT request
+  We are writing all the logic at BusinessService Class because it is the main class which contain the data/entry
+  
+  
+  ________________________________________________________POST request_________________________________________________________
+  
+  
+  #To add the new entry
+  # create new topics
+  # this is the post request 
+  eg
+  @RequestMapping(method=RequestMethod.POST, value="/topics")  // here this is how we map this for post request  this can be used for any request but GET is by default but we can write by this way also
+	public void addTopics(@RequestBody Subjects sub) {	      // to insert it accept the single Subjects object/ instance to add 
+	businessTry.addSubject(sub);                              // by @RequestBody annotation is pass the json object from spring mvc to to this method as an instance / object
+	}
+	HERE in value the URL are of post request
+	
+	
+	Now when we want to make a post request and add that in existing list
+	HERE WE USE POST REQUEST
+	USE POSTMAN FOR THIS WORK
+	
+		@RequestMapping(method=RequestMethod.POST, value="/topics")  // here this is how we map this for post request  this can be used for any request but GET is by default but we can write by this way also
+	public void addSubject(@RequestBody Subjects sub) {    // to pick the instance from req body and add this to existing list
+	// here it means your request payload goona contain a JSON representation of this Subjects instance/object 
+	// here we are asking it to take that request body and convert it into Subjects  instance/Object type and pass this to addSubject method
+	// when this URL is accessed
+		businesstry.addSubject(sub);
+		
+	}
+	
+	THIS WILL CONVERT YOUR JSON REPRESENTATION TO Subjects instance/object by Spring mvc and by @RequestBody it will be passed to 
+	
+	PostMan eg
+	URL: http://localhost:8080/topics
+	in Body: {
+    		"s_no": "5",
+    		"sub": "C++",
+    		"des": "HELLO C++ DEV"
+			}
+
+in Headers : key= Content-Type  value = application/json
+	
+	
+	
+_____________________________________________________________PUT request_____________________________________________________
+	 #it Update the Existing Entry   // Data Update
+	 
+	 
+	 @RequestMapping(method=RequestMethod.PUT, value="/topics/{id}")
+	public void updateSubject( @RequestBody Subjects forUpdate,@PathVariable String id) {
+		
+		businessTry.updateSubject(forUpdate,id);
+		
+	}
+	
+	HERE FOR JSON REPRESENTATION TO Subjects instance/object by Spring mvc we have to use @RequestBody and for URL variable we use @PathVariable  
+	For Put request we need two things 1) the updated instance/object/value   2) that index / object id in which we have to update 
+	so thats why  this Function contain two parameter
+	
+	
+	PostMan eg
+	URL:  http://localhost:8080/topics/6   // because that specific entry we want to update 
+	in Body :  {
+    			"s_no": "6",
+    			"sub": " Updated HTML",
+   				 "des": "Updated HELLO HTML DEV"
+				}
+	
+	in Headers : key= Content-Type  value = application/json
+	
+	
+	 
+	__________________________________________________________DELETE request_____________________________________________________
+	 
+	 #to delete the Existing entry / value in instance
+	 # This will delete the Existing entry by its id
+	 
+	 
+	 //DELETE REQUEST
+	// to DELETE the Existing Entry
+	@RequestMapping(method=RequestMethod.DELETE, value="/topics/{id}")
+	public void deleteSubject(@PathVariable String id) {
+		businessTry.deleteSubject(id);	
+	}
+	
+	
+	
+IN CONTROLLER CLASS
+
+// this is to DELETE the existing entry from the List by its ID
+		public void deleteSubject(String id) {
+			subAuto.removeIf(t -> t.getS_no().equals(id));     //Lamda Expression
+			System.out.println("Subject Succesfully REMOVED");
+		}
+	 
+	 
+	 PostMan eg
+	URL:  http://localhost:8080/topics/6   // because that specific entry we want to DELETE
+	
+	in Headers : key= Content-Type  value = application/json
+	
+	
+	
+	######################################CRUD OPERATIONS ARE IN THIS PROJECT########################################
+	let's Start....
+	
+	SO FOR NOW WE ARE USING Apache Derby relational database implemented/ merged with this 
+	its a relational database that works on Query Fire same
+	
+	Infuture we will use an Relational Database like MySql and other
+	
+	here we are creating an interface SubjectsRepository and extends CurdRepository for basic curd operations
+	what CurdRepository do?
+	
+	public interface SubjectsRepository extends CrudRepository <Subjects,String> {
+// basic CRUD OPERATIONS LIKE Standard Crud operations
+	// Spring data JPA is goona provide a class and this interface will extends and inherit all basic CRUD operations
+  // but this repository is Generic type so it needs to privide generic type information
+	// information needs to provide is 
+//	1) What is the entity class you are working on in out case its Subjects
+//	2) type of id that this entity class have	
+}
+
+now that value will not be hard coded it will show NULL ARRAY in starting because it is a Database now that HardCoded Value
+
+SubjectsRepository will perform all the CURD operations for us with almost lesscode
+
+
+######################################  CRUD OPERATIONS With MySQL Database using XAmpp  ########################################
+connection in application.properties
+
+
+	spring.datasource.name=spring_boot
+	spring.datasource.url=jdbc:mysql://127.0.0.1:3306/spring_boot           
+	spring.datasource.username=root
+	spring.datasource.password=
+	spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+	spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL55Dialect
+	spring.jpa.hibernate.ddl-auto=update
+
+    In Subjects class which is Structure / pojo class
+    @Entity  // it tells that this is the thing that needs to be save in database and @Entity declare it and all the instance/value act as rows
+@Table(name="Subjects")                  //it is to define the table name to be created in database
+
+@Id   // this id means primary key in database  
+//@GeneratedValue(strategy = GenerationType.AUTO)  //it is the Auto Increment By Annotation in Database but but wait String cannot be Auto Incremented
+
+NOTE- Here number of properties/variable is act as column in table
+    - and every instance/object act as rows / entries in database
+
+
+ABOUT CrudRepository - is the class contains basic crud operations we just have to make an interface and extend it and make object of that interface to use that crud methods
+
+// Spring data JPA is goona provide a class and this interface will extends and inherit all basic CRUD operations
+  // but this repository is Generic type so it needs to privide generic type information
+	// information needs to provide is 
+//	1) What is the entity class you are working on in out case its Subjects
+//	2) type of id that this entity class have
+example
+
+public interface SubjectsRepository extends CrudRepository <Subjects,String> {
+}
+here Subjects is the POJO/entity class 
+string is the id attribute type
+
+these methods came out of the box they interact with database from query fire to fetch result and make work easy..... thanku crud
+
+
+____________________________________________IMP________________________________________________________
+What if you want a custom Query/ filter?
+then just declare in interface like
+
+public List<Course> findByName(String name);  if its a string
+public List<Course> findByTopicId(String topicId);  if its a another class property
+
+crud will implement/ define it for you
+
+
+for onetomany relationship we use @OneToMany to map the primary key with 
+
+
+
+___________________________________________________SUMMARY______________________________________________________
+App Execution by cmd using mvn clean to build  jar or war 
+whats the difference?
+jar - To deploy in that integrated Tomcat Server 
+war - To deploy in External Server/Tomcat Server 
+it both runs the same way
+
+Another concept is   ___________________________________Actuator_________________________________________________
+
+To manage the Application from external 
+it just add the external controller methods to manage the application from external
+commands are
+refer-    https://docs.spring.io/spring-boot/docs/current/actuator-api/htmlsingle/
+
+to change the management port Imp not the actual application port
+
+command in application.properties is       management.port.9001     // it can be any thing
+
+
+
+
+
+
+
+
+
+
+
+
+
+   
