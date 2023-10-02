@@ -287,8 +287,6 @@ refer-    https://docs.spring.io/spring-boot/docs/current/actuator-api/htmlsingl
 to change the management port Imp not the actual application port
 
 command in application.properties is       management.port.9001     // it can be any thing
-i love you
-i love you too babeeeeeeeeeee!!!!!!
 
 
 
